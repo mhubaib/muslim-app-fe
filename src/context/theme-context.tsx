@@ -2,44 +2,18 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-interface ColorsPalette {
-    primary: string;
-    secondary: string;
-    accent: string;
-}
-
-interface BorderPalette {
-    primary: string;
-    secondary: string;
-}
-
-interface ButtonPalette {
-    background: string;
-    text: string;
-    border: string;
-    disabled: string;
-}
-
-interface CardPalette {
-    background: string;
-    shadow: string;
-    border: string;
-}
-
-interface InputPalette {
-    background: string;
-    text: string;
-    border: string;
-    placeholder: string;
-}
-
 interface ThemeColors {
-    bg: ColorsPalette;
-    text: ColorsPalette;
-    border: BorderPalette;
-    button: ButtonPalette;
-    card: CardPalette;
-    input: InputPalette;
+    primaryAction: string
+    hoverState: string
+    background: string
+    mainSurface: string
+    secondarySurface: string
+    mainText: string
+    mutedText: string
+    successState: string
+    errorState: string
+    warningState: string
+    infoState: string
 }
 
 interface ThemeContextType {
@@ -109,70 +83,30 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
 
     const styles: { light: ThemeColors; dark: ThemeColors } = {
         light: {
-            bg: {
-                primary: '#E8F5E9', // Hijau sangat muda untuk latar belakang
-                secondary: '#FFFFFF', // Putih bersih untuk kontras
-                accent: '#4CAF50', // Hijau Islami sebagai aksen
-            },
-            text: {
-                primary: '#1A3C34', // Hijau tua untuk teks utama
-                secondary: '#4A4A4A', // Abu-abu gelap untuk teks sekunder
-                accent: '#388E3C', // Hijau sedang untuk teks aksen
-            },
-            border: {
-                primary: '#81C784', // Hijau muda untuk border
-                secondary: '#B0BEC5', // Abu-abu muda untuk border sekunder
-            },
-            button: {
-                background: '#4CAF50', // Hijau untuk tombol
-                text: '#FFFFFF', // Teks putih untuk kontras
-                border: '#388E3C', // Border hijau sedikit lebih gelap
-                disabled: '#A5D6A7', // Hijau pudar untuk tombol nonaktif
-            },
-            card: {
-                background: '#F1F8E9', // Hijau sangat muda untuk kartu
-                shadow: '#C8E6C9', // Bayangan hijau lembut
-                border: '#A5D6A7', // Border hijau muda
-            },
-            input: {
-                background: '#FFFFFF', // Latar belakang putih untuk input
-                text: '#1A3C34', // Teks hijau tua
-                border: '#81C784', // Border hijau muda
-                placeholder: '#90A4AE', // Abu-abu untuk placeholder
-            },
+            primaryAction: '#10b981',
+            hoverState: '#059669',
+            background: '#d1fae5',
+            mainSurface: '#ffffff',
+            secondarySurface: '#f3f4f6',
+            mainText: '#1a1a1a',
+            mutedText: '#666666',
+            successState: '#10b981',
+            warningState: '#f59e0b',
+            errorState: '#ef4444',
+            infoState: '#3b82f6'
         },
         dark: {
-            bg: {
-                primary: '#1A3C34', // Hijau tua untuk latar belakang
-                secondary: '#263238', // Abu-abu gelap untuk kontras
-                accent: '#4CAF50', // Hijau Islami sebagai aksen
-            },
-            text: {
-                primary: '#E8F5E9', // Hijau sangat muda untuk teks utama
-                secondary: '#B0BEC5', // Abu-abu muda untuk teks sekunder
-                accent: '#81C784', // Hijau muda untuk teks aksen
-            },
-            border: {
-                primary: '#4CAF50', // Hijau untuk border
-                secondary: '#455A64', // Abu-abu gelap untuk border sekunder
-            },
-            button: {
-                background: '#388E3C', // Hijau sedikit lebih gelap untuk tombol
-                text: '#E8F5E9', // Teks hijau sangat muda
-                border: '#2E7D32', // Border hijau lebih tua
-                disabled: '#4A7043', // Hijau sangat gelap untuk tombol nonaktif
-            },
-            card: {
-                background: '#263238', // Abu-abu gelap untuk kartu
-                shadow: '#1A3C34', // Bayangan hijau tua
-                border: '#4CAF50', // Border hijau
-            },
-            input: {
-                background: '#37474F', // Abu-abu gelap untuk input
-                text: '#E8F5E9', // Teks hijau sangat muda
-                border: '#4CAF50', // Border hijau
-                placeholder: '#78909C', // Abu-abu untuk placeholder
-            },
+            primaryAction: '#10b981',
+            hoverState: '#34d399',
+            background: '#064e3b',
+            mainSurface: '#0a0e27',
+            secondarySurface: '#1a1f3a',
+            mainText: '#ffffff',
+            mutedText: '#d1d5db',
+            successState: '#a7f3d0',
+            warningState: '#fcd34d',
+            errorState: '#fecaca',
+            infoState: '#93c5fd'
         },
     };
 

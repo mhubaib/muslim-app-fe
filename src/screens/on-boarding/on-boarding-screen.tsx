@@ -1,8 +1,9 @@
-import React, { useRef } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Dimensions, Platform, Alert } from 'react-native';
+import { useRef } from 'react';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Dimensions, Alert } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolate, Extrapolate } from 'react-native-reanimated';
 import { useTheme } from '../../context/theme-context';
 import LocationService from '../../services/location-service';
+import { useAuth } from '../../context/auth-context';
 
 const { width } = Dimensions.get('window');
 
@@ -10,6 +11,7 @@ const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
 const OnBoardingScreen = () => {
   const { colors, changeTheme } = useTheme();
+  const { completeOnBoarding } = useAuth();
   const scrollX = useSharedValue(0);
   const flatListRef = useRef<FlatList>(null);
 
@@ -24,6 +26,13 @@ const OnBoardingScreen = () => {
     }
   };
 
+  const handlePrevious = () => {
+    const currentIndex = Math.round(scrollX.value / width);
+    if (currentIndex > 0) {
+      flatListRef.current?.scrollToIndex({ index: currentIndex - 1, animated: true });
+    }
+  }
+
   const requestLocationPermission = async () => {
     let permissionGranted = await LocationService.checkLocationPermission();
 
@@ -36,9 +45,10 @@ const OnBoardingScreen = () => {
       const currentLocation = await LocationService.getCurrentLocation();
       if (currentLocation) {
         // Save location to backend
-        await LocationService.saveLocationToBackend(currentLocation);
+        // await LocationService.saveLocationToBackend(currentLocation);
       }
     }
+    handleNext()
   }
 
   const data = [
@@ -48,8 +58,8 @@ const OnBoardingScreen = () => {
       description: 'Selamat datang di aplikasi Muslim App. Mari mulai perjalanan Anda.',
       image: require('../../assets/muslim-app-logo.png'),
       renderContent: () => (
-        <TouchableOpacity style={[styles.button, { backgroundColor: colors.card.background }]} onPress={handleNext}>
-          <Text style={[styles.buttonText, { color: colors.text.primary }]}>Mulai</Text>
+        <TouchableOpacity style={[styles.button, { backgroundColor: colors.primaryAction }]} onPress={handleNext}>
+          <Text style={[styles.buttonText, { color: colors.mainText }]}>Mulai</Text>
         </TouchableOpacity>
       ),
     },
@@ -61,22 +71,22 @@ const OnBoardingScreen = () => {
       renderContent: () => (
         <View style={styles.themeSelectionContainer}>
           <TouchableOpacity
-            style={[styles.themeButton, { backgroundColor: colors.card.background }]} // Use card color for theme buttons
+            style={[styles.themeButton, { backgroundColor: colors.primaryAction }]}
             onPress={() => {
               changeTheme('light');
               handleNext();
             }}
           >
-            <Text style={[styles.buttonText, { color: colors.text.accent }]}>Light</Text>
+            <Text style={[styles.buttonText, { color: colors.mainText }]}>Light</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.themeButton, { backgroundColor: colors.card.background }]} // Use card color for theme buttons
+            style={[styles.themeButton, { backgroundColor: colors.primaryAction }]}
             onPress={() => {
               changeTheme('dark');
               handleNext();
             }}
           >
-            <Text style={[styles.buttonText, { color: colors.text.accent }]}>Dark</Text>
+            <Text style={[styles.buttonText, { color: colors.mainText }]}>Dark</Text>
           </TouchableOpacity>
         </View>
       ),
@@ -87,8 +97,8 @@ const OnBoardingScreen = () => {
       description: 'Izinkan akses lokasi untuk fitur yang lebih personal.',
       image: require('../../assets/muslim-app-logo.png'),
       renderContent: () => (
-        <TouchableOpacity style={[styles.button, { backgroundColor: colors.card.background }]} onPress={requestLocationPermission}>
-          <Text style={[styles.buttonText, { color: colors.text.accent }]}>Izinkan Lokasi</Text>
+        <TouchableOpacity style={[styles.button, { backgroundColor: colors.primaryAction }]} onPress={requestLocationPermission}>
+          <Text style={[styles.buttonText, { color: colors.mainText }]}>Izinkan Lokasi</Text>
         </TouchableOpacity>
       ),
     },
@@ -98,8 +108,11 @@ const OnBoardingScreen = () => {
       description: 'Anda siap menggunakan aplikasi. Selamat menikmati!',
       image: require('../../assets/muslim-app-logo.png'),
       renderContent: () => (
-        <TouchableOpacity style={[styles.button, { backgroundColor: colors.card.background }]} onPress={() => Alert.alert('Onboarding Selesai!')}>
-          <Text style={[styles.buttonText, { color: colors.text.accent }]}>Selesai</Text>
+        <TouchableOpacity style={[styles.button, { backgroundColor: colors.primaryAction }]} onPress={() => {
+          completeOnBoarding();
+          Alert.alert('Onboarding Selesai!');
+        }}>
+          <Text style={[styles.buttonText, { color: colors.mainText }]}>Selesai</Text>
         </TouchableOpacity>
       ),
     },
@@ -107,13 +120,13 @@ const OnBoardingScreen = () => {
 
   const renderItem = ({ item, index }: { item: any; index: number }) => {
     return (
-      <View style={[styles.slide, { backgroundColor: colors.bg.primary, width }]}>
-        <View style={styles.heroContainer}>
-          <Image source={item.image} style={styles.heroImage} />
-        </View>
+      <View style={[styles.slide, { backgroundColor: colors.background, width: width }]}>
+          <View style={styles.heroContainer}>
+            <Image source={item.image} style={styles.heroImage} />
+          </View>
         <View style={styles.contentContainer}>
-          <Text style={[styles.title, { color: colors.text.primary }]}>{item.title}</Text>
-          <Text style={[styles.description, { color: colors.text.secondary }]}>{item.description}</Text>
+          <Text style={[styles.title, { color: colors.mainText }]}>{item.title}</Text>
+          <Text style={[styles.description, { color: colors.mutedText }]}>{item.description}</Text>
           {item.renderContent && item.renderContent()}
         </View>
       </View>
@@ -121,7 +134,7 @@ const OnBoardingScreen = () => {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.bg.primary }]}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <AnimatedFlatList
         ref={flatListRef}
         data={data}
@@ -146,7 +159,7 @@ const OnBoardingScreen = () => {
             );
             return {
               width: widthAnimated,
-              backgroundColor: colors.bg.secondary,
+              backgroundColor: colors.secondarySurface,
             };
           });
 
@@ -170,6 +183,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingVertical: 80
   },
   heroContainer: {
     flex: 1,
@@ -177,15 +191,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   heroImage: {
-    width: 200,
-    height: 200,
+    width: 280,
+    height: 280,
     resizeMode: 'contain',
   },
   contentContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: 30,
   },
   title: {
     fontSize: 24,
@@ -198,8 +212,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   button: {
-    paddingVertical: 12,
-    paddingHorizontal: 30,
+    paddingVertical: 16,
+    paddingHorizontal: 50,
     borderRadius: 25,
     marginTop: 20,
   },
@@ -227,6 +241,7 @@ const styles = StyleSheet.create({
     height: 10,
     borderRadius: 5,
     marginHorizontal: 5,
+    marginBottom: 16,
   },
 });
 
