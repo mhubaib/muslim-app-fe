@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     heroSection: {
         width: '100%',
         alignItems: 'center',
-        marginBottom: 70,
+        marginBottom: 60,
     },
     heroTitle: {
         fontSize: 32,

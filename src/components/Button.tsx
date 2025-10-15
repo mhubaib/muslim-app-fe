@@ -16,31 +16,35 @@ export default function Button({ title, onPress, isLoading, disabled, icon, styl
 
     const styles = StyleSheet.create({
         button: {
-            borderRadius: 5,
+            flexDirection: 'row',
+            gap: 12,
+            borderRadius: 10,
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: colors.button.background, // Menggunakan warna primary dari tema
+            backgroundColor: colors.primaryAction, // Menggunakan warna primary dari tema
         },
         small: {
-            padding: 5,
+            padding: 8,
         },
         medium: {
             padding: 10,
         },
         large: {
-            padding: 15,
+            padding: 12,
         },
         text: {
-            color: colors.button.text, // Menggunakan warna text dari tema
+            color: colors.mainText, 
+            fontFamily: 'poppins',
+            fontWeight: '600'
         },
         smallText: {
             fontSize: 12,
         },
         mediumText: {
-            fontSize: 16,
+            fontSize: 14,
         },
         largeText: {
-            fontSize: 20,
+            fontSize: 16,
         },
         loadingStyle: {
             flexDirection: 'row',
@@ -65,11 +69,11 @@ export default function Button({ title, onPress, isLoading, disabled, icon, styl
     return (
         <TouchableOpacity style={buttonStyle} onPress={onPress} disabled={disabled || isLoading}>
             {icon && (
-                <FontAwesome name={icon} size={20} color={colors.button.text} /> // Menggunakan warna text dari tema
+                <FontAwesome name={icon} size={20} color={colors.mainText} /> // Menggunakan warna text dari tema
             )}
             {isLoading ? (
                 <View style={styles.loadingStyle}>
-                    <ActivityIndicator color={colors.button.text} /> // Menggunakan warna text dari tema
+                    <ActivityIndicator color={colors.mainText} /> 
                     <Text style={textStyle}>{loadingText || 'Loading'}</Text>
                 </View>
             ) : (

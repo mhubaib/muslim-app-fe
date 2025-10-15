@@ -12,11 +12,10 @@ interface InputProps {
     secureTextEntry?: boolean
     onFocus?: () => void
     onBlur?: () => void
-    rightIcon?: any
     type?: 'text' | 'password'
 }
 
-export default function Input({ leftIcon, placeholder, value, onChangeText, type, onFocus, onBlur, rightIcon, label }: InputProps) {
+export default function Input({ leftIcon, placeholder, value, onChangeText, type, onFocus, onBlur, label }: InputProps) {
     const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
     const [isFocused, setIsFocused] = useState<boolean>(false); // State untuk melacak fokus
     const { colors } = useTheme();
@@ -50,7 +49,7 @@ export default function Input({ leftIcon, placeholder, value, onChangeText, type
         inputContainer: {
             flexDirection: 'row',
             alignItems: 'center',
-            paddingHorizontal: 10,
+            paddingHorizontal: 14,
             backgroundColor: colors.mainSurface, // Warna latar belakang dinamis
             borderWidth: 1,
             borderColor: isFocused ? colors.primaryAction : colors.mainSurface, // Border dinamis saat fokus
