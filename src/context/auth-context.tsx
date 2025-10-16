@@ -3,7 +3,6 @@ import { loginUser, registerUser, logoutUser, verifyEmailUser } from '../api/aut
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { v4 as uuidv4 } from 'uuid';
 import * as Keychain from 'react-native-keychain';
-// import DeviceInfo from 'react-native-device-info'; // Hapus atau tambahkan jika benar-benar diperlukan untuk tujuan lain
 
 const getPushToken = async (): Promise<string | null> => {
   // Implementasi untuk mendapatkan push token dari layanan notifikasi push Anda
@@ -36,7 +35,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [userToken, setUserToken] = useState<string | null>(null);
-  const [user, setUser] = useState<UserData | null>(null); // State untuk data pengguna
+  const [user, setUser] = useState<UserData | null>(null); 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [hasOnBoarded, setHasOnBoarded] = useState<boolean>(false);
   const [deviceId, setDeviceId] = useState<string>('');

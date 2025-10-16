@@ -1,3 +1,4 @@
+import 'react-native-get-random-values'
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider } from './src/context/auth-context';
 import AppNavigator from './src/navigations/app-stack-navigator';

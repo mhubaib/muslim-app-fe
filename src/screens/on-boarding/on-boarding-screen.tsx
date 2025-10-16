@@ -56,7 +56,7 @@ const OnBoardingScreen = () => {
       id: '1',
       title: 'Selamat Datang',
       description: 'Selamat datang di aplikasi Muslim App. Mari mulai perjalanan Anda.',
-      image: require('../../assets/muslim-app-logo.png'),
+      image: require('../../assets/bulan-sabit-Photoroom.png'),
       renderContent: () => (
         <TouchableOpacity style={[styles.button, { backgroundColor: colors.primaryAction }]} onPress={handleNext}>
           <Text style={[styles.buttonText, { color: colors.mainText }]}>Mulai</Text>
@@ -67,7 +67,7 @@ const OnBoardingScreen = () => {
       id: '2',
       title: 'Pilih Tema',
       description: 'Pilih tema aplikasi yang sesuai dengan preferensi Anda: terang atau gelap.',
-      image: require('../../assets/muslim-app-logo.png'),
+      image: require('../../assets/bulan-sabit-Photoroom.png'),
       renderContent: () => (
         <View style={styles.themeSelectionContainer}>
           <TouchableOpacity
@@ -95,7 +95,7 @@ const OnBoardingScreen = () => {
       id: '3',
       title: 'Izin Lokasi',
       description: 'Izinkan akses lokasi untuk fitur yang lebih personal.',
-      image: require('../../assets/muslim-app-logo.png'),
+      image: require('../../assets/bulan-sabit-Photoroom.png'),
       renderContent: () => (
         <TouchableOpacity style={[styles.button, { backgroundColor: colors.primaryAction }]} onPress={requestLocationPermission}>
           <Text style={[styles.buttonText, { color: colors.mainText }]}>Izinkan Lokasi</Text>
@@ -106,7 +106,7 @@ const OnBoardingScreen = () => {
       id: '4',
       title: 'Selesai',
       description: 'Anda siap menggunakan aplikasi. Selamat menikmati!',
-      image: require('../../assets/muslim-app-logo.png'),
+      image: require('../../assets/bulan-sabit-Photoroom.png'),
       renderContent: () => (
         <TouchableOpacity style={[styles.button, { backgroundColor: colors.primaryAction }]} onPress={() => {
           completeOnBoarding();
@@ -191,8 +191,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   heroImage: {
-    width: 280,
-    height: 280,
+    width: 350,
+    height: 350,
     resizeMode: 'contain',
   },
   contentContainer: {
