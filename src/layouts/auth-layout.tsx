@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { useTheme } from "../context/theme-context";
 
 interface AuthContainerProps {
     children: ReactNode;
@@ -8,7 +9,9 @@ interface AuthContainerProps {
     heroSubTitle: string
 }
 
-export default function AuthContainer({ children, heroTitle, heroSubTitle }: AuthContainerProps) {
+export default function AuthLayout({ children, heroTitle, heroSubTitle }: AuthContainerProps) {
+    const { colors } = useTheme()
+
     return (
         <SafeAreaView style={styles.container}>
             <KeyboardAwareScrollView
@@ -19,8 +22,8 @@ export default function AuthContainer({ children, heroTitle, heroSubTitle }: Aut
                 showsVerticalScrollIndicator={false}
             >
                 <View style={styles.heroSection}>
-                    <Text style={styles.heroTitle}>{heroTitle}</Text>
-                    <Text style={styles.heroSubTitle}>{heroSubTitle}</Text>
+                    <Text style={[styles.heroTitle, { color: colors.mainText }]}>{heroTitle}</Text>
+                    <Text style={[styles.heroSubTitle, { color: colors.mutedText }]}>{heroSubTitle}</Text>
                 </View>
                 <View style={styles.children}>
                     {children}
@@ -40,7 +43,7 @@ const styles = StyleSheet.create({
     scrollContent: {
         flexGrow: 1,
         alignItems: 'center',
-        paddingVertical: 100,
+        paddingVertical: 75,
         padding: 14,
     },
     heroSection: {

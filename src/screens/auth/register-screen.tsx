@@ -2,8 +2,8 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import Input from '../../components/Input'
 import { useReducer } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
-import AuthContainer from '../../containers/auth-container'
 import { useTheme } from '../../context/theme-context'
+import AuthLayout from '../../layouts/auth-layout'
 
 export default function RegisterScreen() {
     const { colors } = useTheme()
@@ -15,7 +15,7 @@ export default function RegisterScreen() {
     })
     return (
         <SafeAreaView style={styles.container}>
-            <AuthContainer
+            <AuthLayout
                 heroTitle='Yuk, lanjutkan Ibadahmu'
                 heroSubTitle='Masuk untuk melanjutkan perjalanan ibadahmu'
             >
@@ -23,7 +23,7 @@ export default function RegisterScreen() {
                     label='Email'
                     placeholder='Masukkan email'
                 />
-            </AuthContainer>
+            </AuthLayout>
         </SafeAreaView>
     )
 }
