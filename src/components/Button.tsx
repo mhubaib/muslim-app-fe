@@ -4,7 +4,7 @@ import { useTheme } from '../context/theme-context';
 
 export default function Button({ title, onPress, isLoading, disabled, icon, style, size = "medium", loadingText }: {
     title: string;
-    onPress: () => void;
+    onPress: () => Promise<any>;
     isLoading?: boolean;
     disabled?: boolean;
     icon?: any;

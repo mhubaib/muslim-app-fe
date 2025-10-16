@@ -16,6 +16,7 @@ export const loginUser = async (email: string, password: string, device_id: stri
 export const registerUser = async (email: string, password: string, username: string, device_id: string, push_token: string | null) => {
     try {
         const response = await axios.post(`${API_URL}/register`, { email, password, username, device_id, push_token });
+        console.log(response, response.data)
         return response.data;
     } catch (error) {
         console.error('Registration failed', error);

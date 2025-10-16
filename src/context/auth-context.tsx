@@ -1,7 +1,9 @@
 import { createContext, useState, useContext, useEffect } from 'react';
 import { loginUser, registerUser, logoutUser, verifyEmailUser } from '../api/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import DeviceInfo from 'react-native-device-info';
+import { v4 as uuidv4 } from 'uuid';
+import * as Keychain from 'react-native-keychain';
+// import DeviceInfo from 'react-native-device-info'; // Hapus atau tambahkan jika benar-benar diperlukan untuk tujuan lain
 
 const getPushToken = async (): Promise<string | null> => {
   // Implementasi untuk mendapatkan push token dari layanan notifikasi push Anda
@@ -9,8 +11,18 @@ const getPushToken = async (): Promise<string | null> => {
   return null;
 };
 
+interface UserData {
+  id: string;
+  email: string;
+  username: string;
+  is_verified: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 interface AuthContextType {
   userToken: string | null;
+  user: UserData | null;
   isLoading: boolean;
   hasOnBoarded: boolean;
   completeOnBoarding: () => Promise<void>;
@@ -24,8 +36,10 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [userToken, setUserToken] = useState<string | null>(null);
+  const [user, setUser] = useState<UserData | null>(null); // State untuk data pengguna
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [hasOnBoarded, setHasOnBoarded] = useState<boolean>(false);
+  const [deviceId, setDeviceId] = useState<string>('');
 
   const completeOnBoarding = async () => {
     try {
@@ -34,53 +48,60 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (e) {
       console.error('Failed to complete onboarding', e);
     }
-  }
-
-  const loadOnBoardingStatus = async () => {
-    try {
-      const onBoarded = await AsyncStorage.getItem('hasOnBoarded');
-      if (onBoarded === 'true') {
-        setHasOnBoarded(true);
-      }
-    } catch (e) {
-      console.error('Failed to load onboarding status', e);
-    }
-  }
+  };
 
   useEffect(() => {
-    loadOnBoardingStatus();
-  }, []);
-
-
-  useEffect(() => {
-    const loadUserToken = async () => {
+    const initializeAuth = async () => {
       try {
+        let storedDeviceId = await Keychain.getGenericPassword({ service: 'appDeviceId' });
+        if (!storedDeviceId) {
+          const newDeviceId: string = uuidv4();
+          setDeviceId(newDeviceId);
+          await Keychain.setGenericPassword('app_device_id', newDeviceId, { service: 'appDeviceId' });
+        } else {
+          setDeviceId(storedDeviceId.password);
+        }
+
+        const onBoarded = await AsyncStorage.getItem('hasOnBoarded');
+        if (onBoarded === 'true') {
+          setHasOnBoarded(true);
+        }
+
         const token = await AsyncStorage.getItem('userToken');
+        const userDataString = await AsyncStorage.getItem('userData');
         if (token) {
           setUserToken(token);
         }
-      } catch (e) {
-        console.error('Failed to load user token', e);
+        if (userDataString) {
+          setUser(JSON.parse(userDataString));
+        }
+
+      } catch (error) {
+        console.error("Failed to initialize auth:", error);
       } finally {
         setIsLoading(false);
       }
     };
-    loadUserToken();
-    return () => {
-      setUserToken(null);
-    }
+
+    initializeAuth();
   }, []);
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      const device_id = await DeviceInfo.getUniqueId();
       const push_token = await getPushToken();
 
-      const response = await loginUser(email, password, device_id, push_token);
-      if (response && response.token) {
+      if (!deviceId) {
+        console.error('Device ID not loaded yet.');
+        return false;
+      }
+
+      const response = await loginUser(email, password, deviceId, push_token);
+      if (response && response.token && response.user) {
         setUserToken(response.token);
+        setUser(response.user); 
         await AsyncStorage.setItem('userToken', response.token);
+        await AsyncStorage.setItem('userData', JSON.stringify(response.user)); // Simpan user data
         return true;
       }
       return false;
@@ -95,8 +116,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const register = async (username: string, email: string, password: string) => {
     setIsLoading(true);
     try {
-      const deviceId = await DeviceInfo.getUniqueId();
       const pushToken = await getPushToken();
+
+      if (!deviceId) {
+        console.error('Device ID not loaded yet.');
+        return false;
+      }
 
       const response = await registerUser(username, email, password, deviceId, pushToken);
       if (response && response.status === 'success') {
@@ -112,12 +137,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const verifyEmail = async (email: string, otp: string) => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       const response = await verifyEmailUser(email, otp);
-      if (response.status === 'success' && response.data && response.data.token) {
-        setUserToken(response.data.token);
-        await AsyncStorage.setItem('userToken', response.data.token);
+      if (response.status === 'success' && response.token && response.user) { // Asumsi response juga mengembalikan user
+        setUserToken(response.token);
+        setUser(response.user); 
+        await AsyncStorage.setItem('userToken', response.token);
+        await AsyncStorage.setItem('userData', JSON.stringify(response.user)); // Simpan user data
         return true;
       }
       return false;
@@ -127,16 +154,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   const logout = async () => {
     setIsLoading(true);
     try {
-      const device_id = await DeviceInfo.getUniqueId();
       const access_token = userToken || '';
-      await logoutUser(device_id, access_token);
+      await logoutUser(deviceId, access_token); 
       setUserToken(null);
+      setUser(null); 
       await AsyncStorage.removeItem('userToken');
+      await AsyncStorage.removeItem('userData'); 
     } catch (error) {
       console.error('Logout failed', error);
     } finally {
@@ -144,8 +172,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  if (isLoading) {
+    return null;
+  }
+
   return (
-    <AuthContext.Provider value={{ userToken, isLoading, login, register, verifyEmail, logout, hasOnBoarded, completeOnBoarding }}>
+    <AuthContext.Provider value={{ userToken, user, isLoading, login, register, verifyEmail, logout, hasOnBoarded, completeOnBoarding }}>
       {children}
     </AuthContext.Provider>
   );

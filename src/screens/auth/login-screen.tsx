@@ -6,6 +6,7 @@ import AuthLayout from '../../layouts/auth-layout'
 import { useTheme } from '../../context/theme-context'
 import Button from '../../components/Button'
 import LinkButton from '../../components/LinkButton'
+import { useAuth } from '../../context/auth-context'
 
 interface LoginState {
     email: string
@@ -54,6 +55,7 @@ function loginReducer(state: LoginState, action: LoginAction) {
 export default function LoginScreen() {
     const [state, dispatch] = useReducer(loginReducer, { email: '', password: '', loading: false, error: null })
     const { colors } = useTheme()
+    const { login } = useAuth()
     const styles = StyleSheet.create({
         container: {
             flex: 1,
@@ -82,6 +84,18 @@ export default function LoginScreen() {
             fontWeight: '400',
         }
     })
+
+
+    const handleLogin = async ({ email, password }: { email: string, password: string }): Promise<any> => {
+        dispatch({ type: 'loading', payload: true })    
+        try {
+            const result = await login(email, password)
+            dispatch({ type: 'loading', payload: false })
+        } catch (error) {
+            dispatch({ type: 'loading', payload: false })
+            dispatch({ type: 'error', payload: (error as Error).message })
+        }
+    }
     return (
         <SafeAreaView style={styles.container}>
             <AuthLayout
@@ -106,7 +120,7 @@ export default function LoginScreen() {
                 <Text style={styles.forgotPassword}>Forgot password?</Text>
                 <Button
                     title='Masuk'
-                    onPress={() => console.log('Masuk')}
+                    onPress={() => handleLogin({ email: state.email, password: state.password })}
                     size='large'
                     icon="sign-in"
                     style={{ marginTop: 36 }}
