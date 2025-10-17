@@ -1,16 +1,19 @@
 import axios from "axios";
 
 
-const API_URL = 'http://localhost:3000/api/auth';
+const API_URL = 'http://172.40.0.43:3000/api/auth';
 
 export const loginUser = async (email: string, password: string, device_id: string, push_token: string | null) => {
-  try {
-    const response = await axios.post(`${API_URL}/login`, { email, password, device_id, push_token });
-    return response.data;
-  } catch (error) {
-    console.error('Login failed', error);
-    throw error;
-  }
+    try {
+        const response = await axios.post(`${API_URL}/login`, { email, password, device_id, push_token });
+        return response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.message || 'Register failed')
+        }
+        console.error('Login failed', error);
+        throw new Error('Network error or unexpected issue');
+    }
 }
 
 export const registerUser = async (email: string, password: string, username: string, device_id: string, push_token: string | null) => {
@@ -19,8 +22,11 @@ export const registerUser = async (email: string, password: string, username: st
         console.log(response, response.data)
         return response.data;
     } catch (error) {
-        console.error('Registration failed', error);
-        throw error;
+        if (axios.isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.message || 'Register failed')
+        }
+        console.error('Register failed', error);
+        throw new Error('Network error or unexpected issue');
     }
 }
 
@@ -29,8 +35,11 @@ export const verifyEmailUser = async (email: string, token: string) => {
         const response = await axios.post(`${API_URL}/verify-email`, { email, token });
         return response.data;
     } catch (error) {
-        console.error('Email verification failed', error);
-        throw error;
+        if (axios.isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.message || 'Verify email failed')
+        }
+        console.error('Verify email failed', error);
+        throw new Error('Network error or unexpected issue');
     }
 }
 
@@ -39,7 +48,10 @@ export const logoutUser = async (device_id: string, access_token: string) => {
         const response = await axios.post(`${API_URL}/logout`, { device_id, access_token });
         return response.data;
     } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.message || 'Logout failed')
+        }
         console.error('Logout failed', error);
-        throw error;
+        throw new Error('Network error or unexpected issue');
     }
 }

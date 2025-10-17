@@ -11,8 +11,6 @@ import { useAuth } from '../../context/auth-context'
 interface LoginState {
     email: string
     password: string
-    loading: boolean
-    error: string | null
 }
 
 interface EmailAction {
@@ -25,17 +23,7 @@ interface PasswordAction {
     payload: string
 }
 
-interface LoadingAction {
-    type: 'loading',
-    payload: boolean
-}
-
-interface ErrorAction {
-    type: 'error',
-    payload: string | null
-}
-
-type LoginAction = EmailAction | PasswordAction | LoadingAction | ErrorAction
+type LoginAction = EmailAction | PasswordAction
 
 function loginReducer(state: LoginState, action: LoginAction) {
     switch (action.type) {
@@ -43,19 +31,15 @@ function loginReducer(state: LoginState, action: LoginAction) {
             return { ...state, email: action.payload }
         case 'password':
             return { ...state, password: action.payload }
-        case 'loading':
-            return { ...state, loading: action.payload }
-        case 'error':
-            return { ...state, error: action.payload }
         default:
             throw new Error('Unhandled action type')
     }
 }
 
-export default function LoginScreen() {
-    const [state, dispatch] = useReducer(loginReducer, { email: '', password: '', loading: false, error: null })
+export default function LoginScreen({ navigation }: { navigation: any }) {
+    const [state, dispatch] = useReducer(loginReducer, { email: '', password: '' })
     const { colors } = useTheme()
-    const { login } = useAuth()
+    const { login, error, isLoading } = useAuth()
     const styles = StyleSheet.create({
         container: {
             flex: 1,
@@ -71,7 +55,7 @@ export default function LoginScreen() {
             justifyContent: 'center',
             alignItems: 'center',
             gap: 15,
-            marginVertical: 30,
+            marginVertical: 20,
         },
         row: {
             height: 0.7,
@@ -82,19 +66,40 @@ export default function LoginScreen() {
             fontSize: 14,
             color: colors.mutedText,
             fontWeight: '400',
+        },
+        signUpLink: {
+            fontSize: 14,
+            color: colors.mutedText,
+            fontWeight: '400',
+            textAlign: 'center',
+            marginTop: 12,
+        },
+        signUp: {
+            color: colors.primaryAction,
+            fontSize: 16,
+            fontWeight: '600',
+            textDecorationLine: 'underline',
+        },
+        error: {
+            fontSize: 14,
+            fontWeight: '600',
+            textAlign: 'center',
+            color: colors.errorState,
         }
     })
 
 
     const handleLogin = async ({ email, password }: { email: string, password: string }): Promise<any> => {
-        dispatch({ type: 'loading', payload: true })    
         try {
             const result = await login(email, password)
-            dispatch({ type: 'loading', payload: false })
+            if (result) return true;
         } catch (error) {
-            dispatch({ type: 'loading', payload: false })
-            dispatch({ type: 'error', payload: (error as Error).message })
+            return false;
         }
+    }
+
+    const navigateToRegister = () => {
+        navigation.navigate('register');
     }
     return (
         <SafeAreaView style={styles.container}>
@@ -117,12 +122,16 @@ export default function LoginScreen() {
                     value={state.password}
                     onChangeText={(password) => dispatch({ type: 'password', payload: password })}
                 />
+                {error && (
+                    <Text style={styles.error}>{error}</Text>
+                )}
                 <Text style={styles.forgotPassword}>Forgot password?</Text>
                 <Button
                     title='Masuk'
                     onPress={() => handleLogin({ email: state.email, password: state.password })}
                     size='large'
                     icon="sign-in"
+                    isLoading={isLoading}
                     style={{ marginTop: 36 }}
                 />
                 <View style={styles.signOptions}>
@@ -140,6 +149,7 @@ export default function LoginScreen() {
                         iconColor="#0096c7"
                     />
                 </View>
+                <Text style={styles.signUpLink}>Don't have an account? <Text style={styles.signUp} onPress={navigateToRegister}>Sign Up</Text></Text>
             </AuthLayout>
         </SafeAreaView>
     )

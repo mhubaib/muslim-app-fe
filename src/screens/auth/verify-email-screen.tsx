@@ -5,7 +5,7 @@ import { StyleSheet, Text, View } from 'react-native'
 import { useTheme } from '../../context/theme-context'
 import AuthLayout from '../../layouts/auth-layout'
 
-export default function VerifyEmailS() {
+export default function VerifyEmailScreen({ navigation }: { navigation: any }) {
     const { colors } = useTheme()
     const styles = StyleSheet.create({
         container: {
@@ -19,6 +19,14 @@ export default function VerifyEmailS() {
                 heroTitle='Yuk, lanjutkan Ibadahmu'
                 heroSubTitle='Masuk untuk melanjutkan perjalanan ibadahmu'
             >
+                <Input
+                    label='Email'
+                    placeholder='Masukkan email'
+                />
+                <Input
+                    label='Email'
+                    placeholder='Masukkan email'
+                />
                 <Input
                     label='Email'
                     placeholder='Masukkan email'

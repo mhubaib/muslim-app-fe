@@ -43,13 +43,13 @@ const styles = StyleSheet.create({
     scrollContent: {
         flexGrow: 1,
         alignItems: 'center',
-        paddingVertical: 75,
+        paddingVertical: 50,
         padding: 14,
     },
     heroSection: {
         width: '100%',
         alignItems: 'center',
-        marginBottom: 60,
+        marginBottom: 40,
     },
     heroTitle: {
         fontSize: 32,
