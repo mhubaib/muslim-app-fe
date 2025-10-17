@@ -79,6 +79,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
             fontWeight: '600',
             textAlign: 'center',
             color: colors.errorState,
+            marginVertical: 8,
         }
     })
 

@@ -9,7 +9,7 @@ export const loginUser = async (email: string, password: string, device_id: stri
         return response.data;
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
-            throw new Error(error.response.data.message || 'Register failed')
+            throw new Error(error.response.data.message || 'Login failed')
         }
         console.error('Login failed', error);
         throw new Error('Network error or unexpected issue');

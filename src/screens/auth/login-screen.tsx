@@ -85,6 +85,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
             fontWeight: '600',
             textAlign: 'center',
             color: colors.errorState,
+            marginVertical: 8,
         }
     })
 

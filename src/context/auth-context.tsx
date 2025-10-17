@@ -43,14 +43,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [error, setError] = useState<string | null>(null)
 
   const completeOnBoarding = async () => {
+    setError(null);
     try {
       await AsyncStorage.setItem('hasOnBoarded', 'true');
       setHasOnBoarded(true);
     } catch (e) {
       setError('Failed to complete onboarding: ' + e);
       console.error('Failed to complete onboarding', e);
-    } finally {
-      setError(null)
     }
   };
 
@@ -94,6 +93,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
+    setError(null);
     try {
       const push_token = await getPushToken();
 
@@ -117,13 +117,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.error('Login failed', error);
       return false;
     } finally {
-      setError(null);
       setIsLoading(false);
     }
   };
 
   const register = async (username: string, email: string, password: string) => {
     setIsLoading(true);
+    setError(null);
     try {
       const pushToken = await getPushToken();
 
@@ -143,13 +143,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.error('Registration failed', error);
       return false;
     } finally {
-      setError(null);
       setIsLoading(false);
     }
   };
 
   const verifyEmail = async (email: string, otp: string) => {
     setIsLoading(true);
+    setError(null);
     try {
       const response = await verifyEmailUser(email, otp);
       if (response.status === 'success' && response.token && response.user) { // Asumsi response juga mengembalikan user
@@ -165,13 +165,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.error('Email verification failed', error);
       return false;
     } finally {
-      setError(null);
       setIsLoading(false);
     }
   };
 
   const logout = async () => {
     setIsLoading(true);
+    setError(null);
     try {
       const access_token = userToken || '';
       await logoutUser(deviceId, access_token); 
@@ -183,7 +183,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setError('Logout failed: ' + error)
       console.error('Logout failed', error);
     } finally {
-      setError(null)
       setIsLoading(false);
     }
   };
