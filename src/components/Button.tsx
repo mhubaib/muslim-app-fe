@@ -33,7 +33,7 @@ export default function Button({ title, onPress, isLoading, disabled, icon, styl
             padding: 12,
         },
         text: {
-            color: colors.mainText, 
+            color: colors.mainText,
             fontFamily: 'poppins',
             fontWeight: '600'
         },
@@ -49,7 +49,13 @@ export default function Button({ title, onPress, isLoading, disabled, icon, styl
         loadingStyle: {
             flexDirection: 'row',
             alignItems: 'center',
+            gap: 10,
         },
+        content: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 10,
+        }
     })
 
     const buttonStyle = [
@@ -68,16 +74,18 @@ export default function Button({ title, onPress, isLoading, disabled, icon, styl
 
     return (
         <TouchableOpacity style={buttonStyle} onPress={onPress} disabled={disabled || isLoading}>
-            {icon && (
-                <FontAwesome name={icon} size={20} color={colors.mainText} /> // Menggunakan warna text dari tema
-            )}
             {isLoading ? (
                 <View style={styles.loadingStyle}>
-                    <ActivityIndicator color={colors.mainText} /> 
-                    <Text style={textStyle}>{loadingText || 'Loading'}</Text>
+                    <ActivityIndicator color={colors.mainText} />
+                    <Text style={textStyle}>{loadingText || 'Loading...'}</Text>
                 </View>
             ) : (
-                <Text style={textStyle}>{title}</Text>
+                <View style={styles.content}>
+                    {icon && (
+                        <FontAwesome name={icon} size={20} color={colors.mainText} /> // Menggunakan warna text dari tema
+                    )}
+                    <Text style={textStyle}>{title}</Text>
+                </View>
             )}
         </TouchableOpacity>
     )

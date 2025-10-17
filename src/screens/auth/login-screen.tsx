@@ -133,6 +133,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
                     icon="sign-in"
                     isLoading={isLoading}
                     style={{ marginTop: 36 }}
+                    disabled={isLoading}
                 />
                 <View style={styles.signOptions}>
                     <View style={styles.row} />

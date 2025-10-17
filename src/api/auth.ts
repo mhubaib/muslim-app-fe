@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-const API_URL = 'http://172.40.0.43:3000/api/auth';
+const API_URL = 'http://10.0.2.2:3000/api/auth';
 
 export const loginUser = async (email: string, password: string, device_id: string, push_token: string | null) => {
     try {

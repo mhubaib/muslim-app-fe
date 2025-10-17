@@ -146,6 +146,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
             const result = await register(state.email, state.password, state.username);
             console.log('Register result:', result);
             if (result) {
+                console.log('Attempting to navigate to verify-email');
                 navigation.navigate('verify-email')
                 console.log('Navigating to verify-email');
             }
