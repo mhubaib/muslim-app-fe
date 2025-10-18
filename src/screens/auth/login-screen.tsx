@@ -11,6 +11,7 @@ import { useAuth } from '../../context/auth-context'
 interface LoginState {
     email: string
     password: string
+    error: string | null
 }
 
 interface EmailAction {
@@ -23,7 +24,12 @@ interface PasswordAction {
     payload: string
 }
 
-type LoginAction = EmailAction | PasswordAction
+interface ErrorAction {
+    type: 'error',
+    payload: string | null
+}
+
+type LoginAction = EmailAction | PasswordAction | ErrorAction;
 
 function loginReducer(state: LoginState, action: LoginAction) {
     switch (action.type) {
@@ -31,15 +37,17 @@ function loginReducer(state: LoginState, action: LoginAction) {
             return { ...state, email: action.payload }
         case 'password':
             return { ...state, password: action.payload }
+        case 'error':
+            return { ...state, error: action.payload }
         default:
             throw new Error('Unhandled action type')
     }
 }
 
 export default function LoginScreen({ navigation }: { navigation: any }) {
-    const [state, dispatch] = useReducer(loginReducer, { email: '', password: '' })
+    const [state, dispatch] = useReducer(loginReducer, { email: '', password: '', error: null })
     const { colors } = useTheme()
-    const { login, error, isLoading } = useAuth()
+    const { login, isLoading } = useAuth()
     const styles = StyleSheet.create({
         container: {
             flex: 1,
@@ -48,7 +56,8 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
         forgotPassword: {
             alignSelf: 'flex-end',
             color: colors.primaryAction,
-            textDecorationLine: 'underline'
+            textDecorationLine: 'underline',
+            marginVertical: 8,
         },
         signOptions: {
             flexDirection: 'row',
@@ -91,10 +100,16 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
 
 
     const handleLogin = async ({ email, password }: { email: string, password: string }): Promise<any> => {
+        dispatch({ type: 'error', payload: null }); 
+        if (state.email.trim() === '' || state.password.trim() === '') {
+            dispatch({ type: 'error', payload: 'Email and Password are required.' });
+            return;
+        }
         try {
             const result = await login(email, password)
             if (result) return true;
-        } catch (error) {
+        } catch (error: any) {
+            dispatch({ type: 'error', payload: error.message || 'Login failed.' });
             return false;
         }
     }
@@ -123,8 +138,8 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
                     value={state.password}
                     onChangeText={(password) => dispatch({ type: 'password', payload: password })}
                 />
-                {error && (
-                    <Text style={styles.error}>{error}</Text>
+                {state.error && (
+                    <Text style={styles.error}>{state.error}</Text>
                 )}
                 <Text style={styles.forgotPassword}>Forgot password?</Text>
                 <Button
@@ -133,7 +148,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
                     size='large'
                     icon="sign-in"
                     isLoading={isLoading}
-                    style={{ marginTop: 36 }}
+                    style={{ marginTop: 20 }}
                     disabled={isLoading}
                 />
                 <View style={styles.signOptions}>

@@ -24,7 +24,6 @@ interface AuthContextType {
   user: UserData | null;
   isLoading: boolean;
   hasOnBoarded: boolean;
-  error: string | null;
   completeOnBoarding: () => Promise<void>;
   login: (email: string, password: string) => Promise<boolean>;
   register: (username: string, email: string, password: string) => Promise<boolean>;
@@ -43,13 +42,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [error, setError] = useState<string | null>(null)
 
   const completeOnBoarding = async () => {
-    setError(null);
     try {
       await AsyncStorage.setItem('hasOnBoarded', 'true');
       setHasOnBoarded(true);
-    } catch (e) {
-      setError('Failed to complete onboarding: ' + e);
+    } catch (e: any) {
       console.error('Failed to complete onboarding', e);
+      throw new Error('Failed to complete onboarding: ' + e.message);
     }
   };
 
@@ -80,10 +78,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
 
       } catch (error) {
-        setError('Failed to initialize auth: ' + error);
         console.error("Failed to initialize auth:", error);
       } finally {
-        setError(null)
         setIsLoading(false);
       }
     };
@@ -93,14 +89,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
-    setError(null);
     try {
       const push_token = await getPushToken();
 
       if (!deviceId) {
-        setError('Device ID not loaded yet.');
         console.error('Device ID not loaded yet.');
-        return false;
+        throw new Error('Device ID not loaded yet.');
       }
 
       const response = await loginUser(email, password, deviceId, push_token);
@@ -112,10 +106,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return true;
       }
       return false;
-    } catch (error) {
-      setError('Login failed: ' + error);
+    } catch (error: any) {
       console.error('Login failed', error);
-      return false;
+      throw new Error(error.message || 'Login failed');
     } finally {
       setIsLoading(false);
     }
@@ -123,25 +116,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const register = async (username: string, email: string, password: string) => {
     setIsLoading(true);
-    setError(null);
     try {
       const pushToken = await getPushToken();
 
       if (!deviceId) {
-        setError('Device ID not loaded yet.');
         console.error('Device ID not loaded yet.');
-        return false;
+        throw new Error('Device ID not loaded yet.');
       }
 
       const response = await registerUser(username, email, password, deviceId, pushToken);
       if (response && response.status === 'success') {
         return true;
       }
-      return false;
-    } catch (error) {
-      setError('Registration failed: ' + error);
+      throw new Error(response.message || 'Registration failed');
+    } catch (error: any) {
       console.error('Registration failed', error);
-      return false;
+      throw new Error(error.message || 'Registration failed');
     } finally {
       setIsLoading(false);
     }
@@ -149,7 +139,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const verifyEmail = async (email: string, otp: string) => {
     setIsLoading(true);
-    setError(null);
     try {
       const response = await verifyEmailUser(email, otp);
       if (response.status === 'success' && response.token && response.user) { // Asumsi response juga mengembalikan user
@@ -159,11 +148,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         await AsyncStorage.setItem('userData', JSON.stringify(response.user)); // Simpan user data
         return true;
       }
-      return false;
-    } catch (error) {
-      setError('Email verification failed: ' + error);
+      throw new Error(response.message || 'Email verification failed');
+    } catch (error: any) {
       console.error('Email verification failed', error);
-      return false;
+      throw new Error(error.message || 'Email verification failed');
     } finally {
       setIsLoading(false);
     }
@@ -171,7 +159,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = async () => {
     setIsLoading(true);
-    setError(null);
     try {
       const access_token = userToken || '';
       await logoutUser(deviceId, access_token); 
@@ -179,16 +166,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(null); 
       await AsyncStorage.removeItem('userToken');
       await AsyncStorage.removeItem('userData'); 
-    } catch (error) {
-      setError('Logout failed: ' + error)
+    } catch (error: any) {
       console.error('Logout failed', error);
+      throw new Error(error.message || 'Logout failed');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <AuthContext.Provider value={{ userToken, user, isLoading, login, register, verifyEmail, logout, hasOnBoarded, completeOnBoarding, error }}>
+    <AuthContext.Provider value={{ userToken, user, isLoading, login, register, verifyEmail, logout, hasOnBoarded, completeOnBoarding }}>
       {children}
     </AuthContext.Provider>
   );

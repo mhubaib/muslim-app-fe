@@ -53,7 +53,7 @@ const registerReducer = (state: RegisterState, action: RegisterAction) => {
 export default function RegisterScreen({ navigation }: { navigation: any }) {
     const { colors } = useTheme()
     const [err, setErr] = useState<string | null>(null)
-    const { register, error, isLoading } = useAuth();
+    const { register, isLoading } = useAuth();
     const [state, dispatch] = useReducer(registerReducer, { username: '', email: '', password: '', confirmPassword: '' })
 
     const styles = StyleSheet.create({
@@ -133,7 +133,6 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
             return;
         }
 
-        // Validasi Confirm Password
         if (!state.confirmPassword) {
             setErr('Konfirmasi password tidak boleh kosong');
             return;
@@ -147,12 +146,10 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
             const result = await register(state.email, state.password, state.username);
             console.log('Register result:', result);
             if (result) {
-                console.log('Attempting to navigate to verify-email');
                 navigation.navigate('verify-email')
-                console.log('Navigating to verify-email');
             }
         } catch (error) {
-            setErr('Registrasi gagal. Periksa kembali data Anda.');
+            setErr('Registrasi gagal:' + error);
         }
     }
     return (
@@ -191,12 +188,9 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
                     onChangeText={(text) => dispatch({ type: 'confirmPassword', payload: text })}
                     type='password'
                 />
-                {error && (
-                    <Text style={styles.error}>{error}</Text>
-                )}                
                 {err && (
                     <Text style={styles.error}>{err}</Text>
-                )}                
+                )}                                
                 <Button
                     title='Sign Up'
                     size='large'
