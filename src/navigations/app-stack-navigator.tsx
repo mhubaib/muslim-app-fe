@@ -22,11 +22,11 @@ export default function AppStackNavigator() {
             >
                 {
                     !hasOnBoarded ? (
-                        <Stack.Screen name="OnBoarding" component={OnBoardingScreen} />
+                        <Stack.Screen name="on-boarding" component={OnBoardingScreen} />
                     ) : userToken ? (
-                        <Stack.Screen name="Main" component={MainDrawerNavigator} />
+                        <Stack.Screen name="main" component={MainDrawerNavigator} />
                     ) : (
-                        <Stack.Screen name="Auth" component={AuthStackNavigator} />
+                        <Stack.Screen name="auth" component={AuthStackNavigator} />
                     )
                 }
             </Stack.Navigator>
