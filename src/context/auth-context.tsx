@@ -35,11 +35,10 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [userToken, setUserToken] = useState<string | null>(null);
-  const [user, setUser] = useState<UserData | null>(null); 
+  const [user, setUser] = useState<UserData | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [hasOnBoarded, setHasOnBoarded] = useState<boolean>(false);
   const [deviceId, setDeviceId] = useState<string>('');
-  const [error, setError] = useState<string | null>(null)
 
   const completeOnBoarding = async () => {
     try {
@@ -98,11 +97,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       const response = await loginUser(email, password, deviceId, push_token);
-      if (response && response.token && response.user) {
-        setUserToken(response.token);
-        setUser(response.user); 
-        await AsyncStorage.setItem('userToken', response.token);
-        await AsyncStorage.setItem('userData', JSON.stringify(response.user)); // Simpan user data
+      console.log(response)
+      if (response && response.data.token && response.data.user) {
+        setUserToken(response.data.token);
+        setUser(response.data.user);
+        await AsyncStorage.setItem('userToken', response.data.token);
+        await AsyncStorage.setItem('userData', JSON.stringify(response.data.user)); // Simpan user data
         return true;
       }
       return false;
@@ -141,11 +141,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     try {
       const response = await verifyEmailUser(email, otp);
-      if (response.status === 'success' && response.token && response.user) { // Asumsi response juga mengembalikan user
-        setUserToken(response.token);
-        setUser(response.user); 
-        await AsyncStorage.setItem('userToken', response.token);
-        await AsyncStorage.setItem('userData', JSON.stringify(response.user)); // Simpan user data
+      console.log(response)
+      if (response.status === 'success' && response.data.token && response.data.user) { // Asumsi response juga mengembalikan user
+        setUserToken(response.data.token);
+        setUser(response.data.user);
+        await AsyncStorage.setItem('userToken', response.data.token);
+        await AsyncStorage.setItem('userData', JSON.stringify(response.data.user)); // Simpan user data
         return true;
       }
       throw new Error(response.message || 'Email verification failed');
@@ -161,11 +162,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     try {
       const access_token = userToken || '';
-      await logoutUser(deviceId, access_token); 
+      await logoutUser(deviceId, access_token);
       setUserToken(null);
-      setUser(null); 
+      setUser(null);
       await AsyncStorage.removeItem('userToken');
-      await AsyncStorage.removeItem('userData'); 
+      await AsyncStorage.removeItem('userData');
     } catch (error: any) {
       console.error('Logout failed', error);
       throw new Error(error.message || 'Logout failed');

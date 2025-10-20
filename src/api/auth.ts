@@ -30,9 +30,9 @@ export const registerUser = async (email: string, password: string, username: st
     }
 }
 
-export const verifyEmailUser = async (email: string, token: string) => {
+export const verifyEmailUser = async (email: string, otp: string) => {
     try {
-        const response = await axios.post(`${API_URL}/verify-email`, { email, token });
+        const response = await axios.post(`${API_URL}/verify-otp`, { email, otp });
         return response.data;
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
