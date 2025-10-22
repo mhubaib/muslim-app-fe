@@ -8,9 +8,9 @@ const Stack = createNativeStackNavigator();
 export default function AuthStackNavigator() {
     return (
         <Stack.Navigator>
-            <Stack.Screen name="login" component={LoginScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="register" component={RegisterScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="verify-email" component={VerifyEmailScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="login-screen" component={LoginScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="register-screen" component={RegisterScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="verify-email-screen" component={VerifyEmailScreen} options={{ headerShown: false }} />
         </Stack.Navigator>
     )
 }

@@ -146,7 +146,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
             const result = await register(state.email, state.password, state.username);
             console.log('Register result:', result);
             if (result) {
-                navigation.navigate('verify-email', { email: state.email })
+                navigation.navigate('verify-email-screen', { email: state.email })
             }
         } catch (error) {
             setErr('Registrasi gagal:' + error);

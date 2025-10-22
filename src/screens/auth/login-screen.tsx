@@ -115,7 +115,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
     }
 
     const navigateToRegister = () => {
-        navigation.navigate('register');
+        navigation.navigate('register-screen');
     }
     return (
         <SafeAreaView style={styles.container}>

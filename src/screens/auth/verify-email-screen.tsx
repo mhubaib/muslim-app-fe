@@ -55,10 +55,7 @@ export default function VerifyEmailScreen({ navigation, route }: { navigation: a
             return
         }
         try {
-            const result = await verifyEmail(emailFromRoute, otp)
-            if (result) {
-                navigation.navigate('Login')
-            }
+            await verifyEmail(emailFromRoute, otp)
         } catch (e: any) {
             setError(e.message || 'Email verification failed.')
         }
