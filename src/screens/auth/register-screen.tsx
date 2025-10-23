@@ -84,7 +84,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
     })
 
     const navigateToLogin = () => {
-        navigation.navigate('login');
+        navigation.navigate('login-screen');
     }
 
     const handleRegister = async () => {
