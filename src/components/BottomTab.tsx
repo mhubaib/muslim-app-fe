@@ -8,7 +8,7 @@ const { width } = Dimensions.get('window');
 
 const INDICATOR_SIZE = 65;
 
-export default function CustomBottomTab({ state, descriptors, navigation }: BottomTabBarProps) {
+export default function BottomTab({ state, descriptors, navigation }: BottomTabBarProps) {
     const tabWidth = width / state.routes.length;
     const translateX = useSharedValue(0);
     const { colors } = useTheme();

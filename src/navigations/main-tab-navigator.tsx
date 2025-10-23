@@ -3,8 +3,9 @@ import HomeScreen from '../screens/main/home-screen';
 import CalenderScreen from '../screens/main/calender-screen';
 import CompassScreen from '../screens/main/compass-screen';
 import PrayerTimesScreen from '../screens/main/prayer-times-screen';
-import CustomBottomTab from '../components/CustomBottomTab';
 import FontAwesome from '@react-native-vector-icons/fontawesome';
+import BottomTab from '../components/BottomTab';
+
 const Tab = createBottomTabNavigator();
 
 const getTabBarIcon = (route: any, color: string) => {
@@ -25,7 +26,7 @@ const getTabBarIcon = (route: any, color: string) => {
 export default function MainTabNavigator() {
     return (
         <Tab.Navigator
-            tabBar={prop => <CustomBottomTab {...prop} />}
+            tabBar={prop => <BottomTab {...prop} />}
             screenOptions={({ route }) => ({
                 headerShown: false,
                 tabBarIcon: ({ color }) => getTabBarIcon(route, color),
