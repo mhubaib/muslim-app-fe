@@ -1,15 +1,27 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated"
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { useTheme } from "../context/theme-context";
 
-const { width } = Dimensions.get('window');
-
 const INDICATOR_SIZE = 65;
 
 export default function BottomTab({ state, descriptors, navigation }: BottomTabBarProps) {
-    const tabWidth = width / state.routes.length;
+    const [screenWidth, setScreenWidth] = useState(Dimensions.get('window').width);
+
+    useEffect(() => {
+        const updateScreenWidth = () => {
+            setScreenWidth(Dimensions.get('window').width);
+        };
+
+        const dimensionsSubscription = Dimensions.addEventListener('change', updateScreenWidth);
+
+        return () => {
+            dimensionsSubscription.remove();
+        };
+    }, []);
+
+    const tabWidth = screenWidth / state.routes.length;
     const translateX = useSharedValue(0);
     const { colors } = useTheme();
 

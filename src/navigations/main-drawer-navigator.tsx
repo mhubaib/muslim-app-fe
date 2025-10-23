@@ -5,7 +5,9 @@ const Drawer = createDrawerNavigator();
 
 export default function MainDrawerNavigator() {
     return (
-        <Drawer.Navigator>
+        <Drawer.Navigator
+            
+        >
             <Drawer.Screen name="home" component={MainTabNavigator} />
         </Drawer.Navigator>
     )

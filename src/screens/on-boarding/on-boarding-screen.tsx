@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Dimensions, Alert } from 'react-native';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolate, Extrapolate } from 'react-native-reanimated';
+import Animated, { useSharedValue, useAnimatedStyle, interpolate, Extrapolate } from 'react-native-reanimated';
 import { useTheme } from '../../context/theme-context';
 import LocationService from '../../services/location-service';
 import { useAuth } from '../../context/auth-context';
@@ -25,13 +25,6 @@ const OnBoardingScreen = () => {
       flatListRef.current?.scrollToIndex({ index: currentIndex + 1, animated: true });
     }
   };
-
-  const handlePrevious = () => {
-    const currentIndex = Math.round(scrollX.value / width);
-    if (currentIndex > 0) {
-      flatListRef.current?.scrollToIndex({ index: currentIndex - 1, animated: true });
-    }
-  }
 
   const requestLocationPermission = async () => {
     let permissionGranted = await LocationService.checkLocationPermission();
